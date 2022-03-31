@@ -10,10 +10,6 @@
   <script>
     const spec = {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "width": 500,
-  "height": 300,
-  "title": "แผนที่แสดงจำนวนโรงเรียนแบ่งตามเขตการปกครอง  จังหวัดกรุงเทพมหานคร",
-  "params": [{"name": "selprovince", "select": "point"}],
   "data": {
     "url": "https://raw.githubusercontent.com/aoomjerr/vagalite_bkk/main/dist3.json",
     "format": {"type": "topojson", "feature": "dist3"}
@@ -30,19 +26,36 @@
       }
     }
   ],
-  "projection": {"type": "mercator"},
-  "mark": "geoshape",
-  "encoding": {
-    "color": {
-      "condition": {
-        "param": "selprovince",
-        "field": "count",
-        "type": "quantitative"
-      },
-      "value": "grey"
+  "hconcat": [
+    {
+      "width": 500,
+      "height": 300,
+      "title": "แผนที่แสดงจำนวนโรงเรียนแบ่งตามเขตการปกครอง  จังหวัดกรุงเทพมหานคร",
+      "projection": {"type": "mercator"},
+      "mark": "geoshape",
+      "encoding": {
+        "color": {"field": "count", "type": "quantitative"},
+        "opacity": {"condition": {"param": "pts", "value": 1}, "value": 0.3}
+      }
     },
-    "opacity": {"condition": {"param": "selprovince", "value": 1}, "value": 0.5}
-  },
+    {
+      "width": 500,
+      "height": 300,
+      "mark": "bar",
+      "params": [
+        {
+          "name": "pts",
+          "select": {"type": "point", "encodings": ["x"], "on": "mouseover"}
+        }
+      ],
+      "encoding": {
+        "x": {"field": "properties.dname_e", "type": "nominal"},
+        "y": {"field": "count", "type": "quantitative"},
+        "color": {"field": "count", "type": "quantitative"},
+        "opacity": {"condition": {"param": "pts", "value": 1}, "value": 0.5}
+      }
+    }
+  ],
   "config": {}
 };
     vegaEmbed("#vis", spec, {mode: "vega-lite"}).then(console.log).catch(console.warn);
